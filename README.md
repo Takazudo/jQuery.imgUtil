@@ -6,7 +6,10 @@ image utilities collection.
 
 ### $.imgUtil.calcNaturalWH
 
-$.imgUtil.calcNaturalWH caliculates thrown img's natural width and height gracefully.
+$.imgUtil.calcNaturalWH caliculates img's natural width / height.  
+Newer browsers have naturalWidth/naturalHeight feature. With these, we can get the img's original width/height. But these features are sometimes difficult to handle because it fails and returns zero before the img was not load-completed.  
+$.imgUtil.calcNaturalWH preloads img as background task then returns the values you want.  
+This also works on old browsers which do not have naturalWidth/naturalHeight feature using tricky way.
 
 ### $.imgUtil.calcRectFitImgWH
 
