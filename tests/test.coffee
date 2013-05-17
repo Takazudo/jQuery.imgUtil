@@ -9,7 +9,7 @@ asyncTest 'calcNaturalWH - ok', ->
 
   expect 3
 
-  ($.calcNaturalWH 'imgs/1.jpg').then (wh, $img) ->
+  ($.imgUtil.calcNaturalWH 'imgs/1.jpg').then (wh, $img) ->
     equal wh.width, 320, "width caliculated correctly #{wh.width}"
     equal wh.height, 320, "height caliculated correctly #{wh.height}"
     equal ($img.attr 'src'), 'imgs/1.jpg', 'img element was returned'
@@ -22,7 +22,7 @@ asyncTest 'calcNaturalWH - ng', ->
 
   expect 1
 
-  ($.calcNaturalWH 'nothinghere.jpg').then (wh) ->
+  ($.imgUtil.calcNaturalWH 'nothinghere.jpg').then (wh) ->
     ok false, 'successed unexpectedly'
   , ->
     ok true, 'fails when img was 404'
@@ -38,7 +38,7 @@ asyncTest 'calcNaturalWH - try many at once', ->
   srcs.push "imgs/#{i}.jpg" for i in [1..10]
 
   deferreds = $.map srcs, (src) ->
-    ($.calcNaturalWH src).then (wh) ->
+    ($.imgUtil.calcNaturalWH src).then (wh) ->
       equal wh.width, 320, "#{src} width caliculated correctly #{wh.width}"
       equal wh.height, 320, "#{src} height caliculated correctly #{wh.height}"
 

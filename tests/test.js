@@ -13,7 +13,7 @@
 
   asyncTest('calcNaturalWH - ok', function() {
     expect(3);
-    return ($.calcNaturalWH('imgs/1.jpg')).then(function(wh, $img) {
+    return ($.imgUtil.calcNaturalWH('imgs/1.jpg')).then(function(wh, $img) {
       equal(wh.width, 320, "width caliculated correctly " + wh.width);
       equal(wh.height, 320, "height caliculated correctly " + wh.height);
       return equal($img.attr('src'), 'imgs/1.jpg', 'img element was returned');
@@ -26,7 +26,7 @@
 
   asyncTest('calcNaturalWH - ng', function() {
     expect(1);
-    return ($.calcNaturalWH('nothinghere.jpg')).then(function(wh) {
+    return ($.imgUtil.calcNaturalWH('nothinghere.jpg')).then(function(wh) {
       return ok(false, 'successed unexpectedly');
     }, function() {
       return ok(true, 'fails when img was 404');
@@ -46,7 +46,7 @@
       srcs.push("imgs/" + i + ".jpg");
     }
     deferreds = $.map(srcs, function(src) {
-      return ($.calcNaturalWH(src)).then(function(wh) {
+      return ($.imgUtil.calcNaturalWH(src)).then(function(wh) {
         equal(wh.width, 320, "" + src + " width caliculated correctly " + wh.width);
         return equal(wh.height, 320, "" + src + " height caliculated correctly " + wh.height);
       });
