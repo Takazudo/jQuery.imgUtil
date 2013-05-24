@@ -213,9 +213,9 @@ do ($=jQuery, window=window, document=document) ->
       return defer.promise()
 
   # ============================================================
-  # imgFillRect
+  # imgCoverRect
   
-  class ns.ImgFillRect extends ns.Event
+  class ns.ImgCoverRect extends ns.Event
 
     @defaults =
       src: null
@@ -225,9 +225,9 @@ do ($=jQuery, window=window, document=document) ->
 
     constructor: (@$el, options) ->
 
-      @options = $.extend ns.ImgFillRect.defaults, options
+      @options = $.extend ns.ImgCoverRect.defaults, options
 
-      src = @$el.attr 'data-imgfillrect-src'
+      src = @$el.attr 'data-imgcoverrect-src'
       if src
         @options.src = src
 
@@ -318,10 +318,10 @@ do ($=jQuery, window=window, document=document) ->
 
       return ret
 
-  $.fn.imgFillRect = (options) ->
+  $.fn.imgCoverRect = (options) ->
     return @each (i, el) ->
       $el = $(el)
-      $el.data 'imgfillrect', (new ns.ImgFillRect $el, options)
+      $el.data 'imgcoverrect', (new ns.ImgCoverRect $el, options)
 
   # ============================================================
   # globalify

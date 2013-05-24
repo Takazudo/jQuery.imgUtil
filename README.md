@@ -15,16 +15,16 @@ This also works on old browsers which do not have naturalWidth/naturalHeight fea
 
 $.imgUtil.calcRectFitImgWH returns rect fit width/height of thrown img.
 
-### $.fn.imgFillRect
+### $.fn.imgCoverRect
 
-$.fn.imgFillRect adjusts img style to fill the container.
+$.fn.imgCoverRect adjusts img style to fill the container.
 
 ## Demos
 
 * [$.imgUtil.calcNaturalWH](http://takazudo.github.io/jQuery.imgUtil/demos/1/)
 * [$.imgUtil.calcRectFitImgWH](http://takazudo.github.io/jQuery.imgUtil/demos/2/)
-* [$.fn.imgFillRect](http://takazudo.github.io/jQuery.imgUtil/demos/3/)
-* [$.fn.imgFillRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/4/)
+* [$.fn.imgCoverRect](http://takazudo.github.io/jQuery.imgUtil/demos/3/)
+* [$.fn.imgCoverRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/4/)
 
 ## Usage
 

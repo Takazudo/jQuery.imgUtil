@@ -41,7 +41,7 @@ pre {
 <script>
 $(function(){
 
-  $('.imgrect').imgFillRect({
+  $('.imgrect').imgCoverRect({
     oninit: function(data) {
       // spin.js http://fgnass.github.io/spin.js/
       var spinnerOptions = {
@@ -59,9 +59,9 @@ $(function(){
 </script>
 </head>
 <body>
-<h1>$.fn.imgFillRect</h1>
-<p>$.fn.imgFillRect oninit option.</p>
-<pre>$('.imgrect').imgFillRect({
+<h1>$.fn.imgCoverRect</h1>
+<p>$.fn.imgCoverRect oninit option.</p>
+<pre>$('.imgrect').imgCoverRect({
   oninit: function(data) {
     // spin.js http://fgnass.github.io/spin.js/
     var spinnerOptions = {
@@ -74,17 +74,17 @@ $(function(){
     (new Spinner(spinnerOptions)).spin(data.el[0]);
   }
 });</pre>
-<div class="imgrect" data-imgfillrect-src="../imgs/7.jpg" style="width:50px; height:100px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/8.jpg" style="width:100px; height:100px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/9.jpg" style="width:150px; height:100px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/10.jpg" style="width:200px; height:100px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/11.jpg" style="width:250px; height:100px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/12.jpg" style="width:300px; height:100px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/13.jpg" style="width:100px; height:50px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/14.jpg" style="width:100px; height:100px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/15.jpg" style="width:100px; height:150px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/16.jpg" style="width:100px; height:200px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/17.jpg" style="width:100px; height:250px;"></div>
-<div class="imgrect" data-imgfillrect-src="../imgs/18.jpg" style="width:100px; height:300px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/7.jpg" style="width:50px; height:100px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/8.jpg" style="width:100px; height:100px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/9.jpg" style="width:150px; height:100px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/10.jpg" style="width:200px; height:100px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/11.jpg" style="width:250px; height:100px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/12.jpg" style="width:300px; height:100px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/13.jpg" style="width:100px; height:50px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/14.jpg" style="width:100px; height:100px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/15.jpg" style="width:100px; height:150px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/16.jpg" style="width:100px; height:200px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/17.jpg" style="width:100px; height:250px;"></div>
+<div class="imgrect" data-imgcoverrect-src="../imgs/18.jpg" style="width:100px; height:300px;"></div>
 </body>
 </html>

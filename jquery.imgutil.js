@@ -242,23 +242,23 @@
         return defer.promise();
       };
     })();
-    ns.ImgFillRect = (function(_super) {
+    ns.ImgCoverRect = (function(_super) {
 
-      __extends(ImgFillRect, _super);
+      __extends(ImgCoverRect, _super);
 
-      ImgFillRect.defaults = {
+      ImgCoverRect.defaults = {
         src: null,
         oninit: null,
         onfail: null,
         cloneImg: true
       };
 
-      function ImgFillRect($el, options) {
+      function ImgCoverRect($el, options) {
         var data, src,
           _this = this;
         this.$el = $el;
-        this.options = $.extend(ns.ImgFillRect.defaults, options);
-        src = this.$el.attr('data-imgfillrect-src');
+        this.options = $.extend(ns.ImgCoverRect.defaults, options);
+        src = this.$el.attr('data-imgcoverrect-src');
         if (src) {
           this.options.src = src;
         }
@@ -286,7 +286,7 @@
         });
       }
 
-      ImgFillRect.prototype.loadImg = function() {
+      ImgCoverRect.prototype.loadImg = function() {
         var defer,
           _this = this;
         defer = $.Deferred();
@@ -301,7 +301,7 @@
         return defer.promise();
       };
 
-      ImgFillRect.prototype.calcImgSize = function(imgWh) {
+      ImgCoverRect.prototype.calcImgSize = function(imgWh) {
         var imgH, imgW, rectH, rectW, res, ret, tryToFitH, tryToFitW;
         ret = {};
         rectW = this.rectWidth;
@@ -341,7 +341,7 @@
         return ret;
       };
 
-      ImgFillRect.prototype.calcAdjustStyles = function(imgSize) {
+      ImgCoverRect.prototype.calcAdjustStyles = function(imgSize) {
         var imgH, imgW, rectH, rectW, ret;
         ret = {};
         rectW = this.rectWidth;
@@ -357,14 +357,14 @@
         return ret;
       };
 
-      return ImgFillRect;
+      return ImgCoverRect;
 
     })(ns.Event);
-    $.fn.imgFillRect = function(options) {
+    $.fn.imgCoverRect = function(options) {
       return this.each(function(i, el) {
         var $el;
         $el = $(el);
-        return $el.data('imgfillrect', new ns.ImgFillRect($el, options));
+        return $el.data('imgcoverrect', new ns.ImgCoverRect($el, options));
       });
     };
     return $.imgUtil = ns;
