@@ -4,6 +4,54 @@ do ($=jQuery, window=window, document=document) ->
   ns = {}
 
   # ============================================================
+  # event module
+
+  class ns.Event
+
+    on: (ev, callback) ->
+      @_callbacks = {} unless @_callbacks?
+      evs = ev.split(' ')
+      for name in evs
+        @_callbacks[name] or= []
+        @_callbacks[name].push(callback)
+      return this
+
+    once: (ev, callback) ->
+      @on ev, ->
+        @off(ev, arguments.callee)
+        callback.apply(@, arguments)
+      return this
+
+    trigger: (args...) ->
+      ev = args.shift()
+      list = @_callbacks?[ev]
+      return unless list
+      for callback in list
+        if callback.apply(@, args) is false
+          break
+      return this
+
+    off: (ev, callback) ->
+      unless ev
+        @_callbacks = {}
+        return this
+
+      list = @_callbacks?[ev]
+      return this unless list
+
+      unless callback
+        delete @_callbacks[ev]
+        return this
+
+      for cb, i in list when cb is callback
+        list = list.slice()
+        list.splice(i, 1)
+        @_callbacks[ev] = list
+        break
+
+      return this
+
+  # ============================================================
   # calcNaturalWH
 
   do ->
@@ -163,6 +211,117 @@ do ($=jQuery, window=window, document=document) ->
       ns.calcNaturalWH(imgsrc).then success, fail
 
       return defer.promise()
+
+  # ============================================================
+  # imgFillRect
+  
+  class ns.ImgFillRect extends ns.Event
+
+    @defaults =
+      src: null
+      oninit: null
+      onfail: null
+      cloneImg: true
+
+    constructor: (@$el, options) ->
+
+      @options = $.extend ns.ImgFillRect.defaults, options
+
+      src = @$el.attr 'data-imgfillrect-src'
+      if src
+        @options.src = src
+
+      @rectWidth = @$el.width()
+      @rectHeight = @$el.height()
+
+      if @options.oninit
+        data =
+          rectWidth: @rectWidth
+          rectHeight: @rectHeight
+          el: @$el
+        @options.oninit data
+
+      @loadImg().then (origWh, $img) =>
+        imgSize = @calcImgSize origWh
+        otherStyles = @calcAdjustStyles imgSize
+        styles = $.extend imgSize, otherStyles
+        $img.css styles
+        @$el.empty().append $img
+        return
+      , =>
+        if @options.onfail
+          @options.onfail()
+        return
+
+    loadImg: ->
+
+      defer = $.Deferred()
+      ns.calcNaturalWH(@options.src).then (origWh, $img) =>
+        if @options.cloneImg
+          $img = $img.clone()
+        defer.resolve origWh, $img
+      , =>
+        defer.reject()
+      return defer.promise()
+
+    calcImgSize: (imgWh) ->
+      
+      ret = {}
+
+      rectW = @rectWidth
+      rectH = @rectHeight
+      imgW = imgWh.width
+      imgH = imgWh.height
+
+      tryToFitW = ->
+        shrinkRatio = rectW / imgW
+        adjustedH = Math.floor (shrinkRatio * imgH)
+        if adjustedH < rectH
+          return false
+        return {
+          adjustedImgWidth: rectW
+          adjustedImgHeight: adjustedH
+        }
+        
+      tryToFitH = ->
+        shrinkRatio = rectH / imgH
+        adjustedW = Math.floor (shrinkRatio * imgW)
+        if adjustedW < rectW
+          return false
+        return {
+          adjustedImgWidth: adjustedW
+          adjustedImgHeight: rectH
+        }
+
+      res = tryToFitW()
+      if res is false
+        res = tryToFitH()
+
+      ret.width = res.adjustedImgWidth
+      ret.height = res.adjustedImgHeight
+
+      return ret
+
+    calcAdjustStyles: (imgSize) ->
+
+      ret = {}
+      
+      rectW = @rectWidth
+      rectH = @rectHeight
+      imgW = imgSize.width
+      imgH = imgSize.height
+
+      if imgW > rectW
+        ret.left = -1 * (Math.floor ((imgW - rectW) / 2))
+      if imgH > rectH
+        ret.top = -1 * (Math.floor ((imgH - rectH) / 2))
+
+      return ret
+
+  $.fn.imgFillRect = (options) ->
+    return @each (i, el) ->
+      $el = $(el)
+      $el.data 'imgfillrect', (new ns.ImgFillRect $el, options)
 
   # ============================================================
   # globalify
