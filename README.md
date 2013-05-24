@@ -17,7 +17,11 @@ $.imgUtil.calcRectFitImgWH returns rect fit width/height of thrown img.
 
 ### $.fn.imgCoverRect
 
-$.fn.imgCoverRect adjusts img style to fill the container.
+$.fn.imgCoverRect adjusts img style to cover the container.
+
+### $.fn.imgContainRect
+
+$.fn.imgContainRect adjusts img style to be contained by the container.
 
 ## Demos
 
@@ -25,6 +29,8 @@ $.fn.imgCoverRect adjusts img style to fill the container.
 * [$.imgUtil.calcRectFitImgWH](http://takazudo.github.io/jQuery.imgUtil/demos/2/)
 * [$.fn.imgCoverRect](http://takazudo.github.io/jQuery.imgUtil/demos/3/)
 * [$.fn.imgCoverRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/4/)
+* [$.fn.imgContainRect](http://takazudo.github.io/jQuery.imgUtil/demos/5/)
+* [$.fn.imgContainRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/6/)
 
 ## Usage
 
