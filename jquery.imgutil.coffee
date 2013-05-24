@@ -4,54 +4,6 @@ do ($=jQuery, window=window, document=document) ->
   ns = {}
 
   # ============================================================
-  # event module
-
-  class ns.Event
-
-    on: (ev, callback) ->
-      @_callbacks = {} unless @_callbacks?
-      evs = ev.split(' ')
-      for name in evs
-        @_callbacks[name] or= []
-        @_callbacks[name].push(callback)
-      return this
-
-    once: (ev, callback) ->
-      @on ev, ->
-        @off(ev, arguments.callee)
-        callback.apply(@, arguments)
-      return this
-
-    trigger: (args...) ->
-      ev = args.shift()
-      list = @_callbacks?[ev]
-      return unless list
-      for callback in list
-        if callback.apply(@, args) is false
-          break
-      return this
-
-    off: (ev, callback) ->
-      unless ev
-        @_callbacks = {}
-        return this
-
-      list = @_callbacks?[ev]
-      return this unless list
-
-      unless callback
-        delete @_callbacks[ev]
-        return this
-
-      for cb, i in list when cb is callback
-        list = list.slice()
-        list.splice(i, 1)
-        @_callbacks[ev] = list
-        break
-
-      return this
-
-  # ============================================================
   # calcNaturalWH
 
   do ->
@@ -213,9 +165,9 @@ do ($=jQuery, window=window, document=document) ->
       return defer.promise()
 
   # ============================================================
-  # imgCoverRect
+  # ImgCoverRect
   
-  class ns.ImgCoverRect extends ns.Event
+  class ns.ImgCoverRect
 
     @defaults =
       src: null
@@ -318,10 +270,98 @@ do ($=jQuery, window=window, document=document) ->
 
       return ret
 
+  # bridge
+
   $.fn.imgCoverRect = (options) ->
     return @each (i, el) ->
       $el = $(el)
       $el.data 'imgcoverrect', (new ns.ImgCoverRect $el, options)
+
+  # ============================================================
+  # imgContainRect
+
+  class ns.ImgContainRect
+    
+    @defaults =
+      src: null
+      oninit: null
+      onfail: null
+      cloneImg: true
+      enlargeSmallImg: true
+
+    constructor: (@$el, options) ->
+
+      @options = $.extend ns.ImgContainRect.defaults, options
+
+      src = @$el.attr 'data-imgcontainrect-src'
+      if src
+        @options.src = src
+
+      @rectWidth = @$el.width()
+      @rectHeight = @$el.height()
+
+      if @options.oninit
+        data =
+          rectWidth: @rectWidth
+          rectHeight: @rectHeight
+          el: @$el
+        @options.oninit data
+
+
+      @calcImgSize().then (res) =>
+        $img = res.img
+        styles =
+          width: res.width
+          height: res.height
+        otherStyles = @calcAdjustStyles styles
+        styles = $.extend styles, otherStyles
+        $img.css styles
+        @$el.empty().append $img
+        return
+      , =>
+        if @options.onfail
+          @options.onfail()
+        return
+    
+    calcImgSize: ->
+
+      defer = $.Deferred()
+
+      o =
+        width: @rectWidth
+        height: @rectHeight
+        enlargeSmallImg: true
+        returnClonedImg: @options.cloneImg
+
+      (ns.calcRectFitImgWH @options.src, o).then (res) =>
+        defer.resolve res
+      , =>
+        defer.reject()
+
+      return defer.promise()
+
+    calcAdjustStyles: (imgSize) ->
+
+      ret = {}
+      
+      rectW = @rectWidth
+      rectH = @rectHeight
+      imgW = imgSize.width
+      imgH = imgSize.height
+
+      if imgW < rectW
+        ret.left = Math.floor ((rectW - imgW) / 2)
+      if imgH < rectH
+        ret.top = Math.floor ((rectH - imgH) / 2)
+      
+      return ret
+
+  # bridge
+
+  $.fn.imgContainRect = (options) ->
+    return @each (i, el) ->
+      $el = $(el)
+      $el.data 'imgcontainrect', (new ns.ImgContainRect $el, options)
 
   # ============================================================
   # globalify

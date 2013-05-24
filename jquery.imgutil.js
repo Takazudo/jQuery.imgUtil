@@ -4,86 +4,10 @@
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
 (function() {
-  var __slice = [].slice,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   (function($, window, document) {
     var ns;
     ns = {};
-    ns.Event = (function() {
-
-      function Event() {}
-
-      Event.prototype.on = function(ev, callback) {
-        var evs, name, _base, _i, _len;
-        if (this._callbacks == null) {
-          this._callbacks = {};
-        }
-        evs = ev.split(' ');
-        for (_i = 0, _len = evs.length; _i < _len; _i++) {
-          name = evs[_i];
-          (_base = this._callbacks)[name] || (_base[name] = []);
-          this._callbacks[name].push(callback);
-        }
-        return this;
-      };
-
-      Event.prototype.once = function(ev, callback) {
-        this.on(ev, function() {
-          this.off(ev, arguments.callee);
-          return callback.apply(this, arguments);
-        });
-        return this;
-      };
-
-      Event.prototype.trigger = function() {
-        var args, callback, ev, list, _i, _len, _ref;
-        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        ev = args.shift();
-        list = (_ref = this._callbacks) != null ? _ref[ev] : void 0;
-        if (!list) {
-          return;
-        }
-        for (_i = 0, _len = list.length; _i < _len; _i++) {
-          callback = list[_i];
-          if (callback.apply(this, args) === false) {
-            break;
-          }
-        }
-        return this;
-      };
-
-      Event.prototype.off = function(ev, callback) {
-        var cb, i, list, _i, _len, _ref;
-        if (!ev) {
-          this._callbacks = {};
-          return this;
-        }
-        list = (_ref = this._callbacks) != null ? _ref[ev] : void 0;
-        if (!list) {
-          return this;
-        }
-        if (!callback) {
-          delete this._callbacks[ev];
-          return this;
-        }
-        for (i = _i = 0, _len = list.length; _i < _len; i = ++_i) {
-          cb = list[i];
-          if (!(cb === callback)) {
-            continue;
-          }
-          list = list.slice();
-          list.splice(i, 1);
-          this._callbacks[ev] = list;
-          break;
-        }
-        return this;
-      };
-
-      return Event;
-
-    })();
     (function() {
       var $holder, $holderSetup, cache, naturalWHDetectable, tryCalc;
       cache = {};
@@ -242,9 +166,7 @@
         return defer.promise();
       };
     })();
-    ns.ImgCoverRect = (function(_super) {
-
-      __extends(ImgCoverRect, _super);
+    ns.ImgCoverRect = (function() {
 
       ImgCoverRect.defaults = {
         src: null,
@@ -359,12 +281,103 @@
 
       return ImgCoverRect;
 
-    })(ns.Event);
+    })();
     $.fn.imgCoverRect = function(options) {
       return this.each(function(i, el) {
         var $el;
         $el = $(el);
         return $el.data('imgcoverrect', new ns.ImgCoverRect($el, options));
+      });
+    };
+    ns.ImgContainRect = (function() {
+
+      ImgContainRect.defaults = {
+        src: null,
+        oninit: null,
+        onfail: null,
+        cloneImg: true,
+        enlargeSmallImg: true
+      };
+
+      function ImgContainRect($el, options) {
+        var data, src,
+          _this = this;
+        this.$el = $el;
+        this.options = $.extend(ns.ImgContainRect.defaults, options);
+        src = this.$el.attr('data-imgcontainrect-src');
+        if (src) {
+          this.options.src = src;
+        }
+        this.rectWidth = this.$el.width();
+        this.rectHeight = this.$el.height();
+        if (this.options.oninit) {
+          data = {
+            rectWidth: this.rectWidth,
+            rectHeight: this.rectHeight,
+            el: this.$el
+          };
+          this.options.oninit(data);
+        }
+        this.calcImgSize().then(function(res) {
+          var $img, otherStyles, styles;
+          $img = res.img;
+          styles = {
+            width: res.width,
+            height: res.height
+          };
+          otherStyles = _this.calcAdjustStyles(styles);
+          styles = $.extend(styles, otherStyles);
+          $img.css(styles);
+          _this.$el.empty().append($img);
+        }, function() {
+          if (_this.options.onfail) {
+            _this.options.onfail();
+          }
+        });
+      }
+
+      ImgContainRect.prototype.calcImgSize = function() {
+        var defer, o,
+          _this = this;
+        defer = $.Deferred();
+        o = {
+          width: this.rectWidth,
+          height: this.rectHeight,
+          enlargeSmallImg: true,
+          returnClonedImg: this.options.cloneImg
+        };
+        (ns.calcRectFitImgWH(this.options.src, o)).then(function(res) {
+          return defer.resolve(res);
+        }, function() {
+          return defer.reject();
+        });
+        return defer.promise();
+      };
+
+      ImgContainRect.prototype.calcAdjustStyles = function(imgSize) {
+        var imgH, imgW, rectH, rectW, ret;
+        ret = {};
+        rectW = this.rectWidth;
+        rectH = this.rectHeight;
+        imgW = imgSize.width;
+        imgH = imgSize.height;
+        if (imgW < rectW) {
+          ret.left = Math.floor((rectW - imgW) / 2);
+        }
+        if (imgH < rectH) {
+          ret.top = Math.floor((rectH - imgH) / 2);
+        }
+        return ret;
+      };
+
+      return ImgContainRect;
+
+    })();
+    $.fn.imgContainRect = function(options) {
+      return this.each(function(i, el) {
+        var $el;
+        $el = $(el);
+        return $el.data('imgcontainrect', new ns.ImgContainRect($el, options));
       });
     };
     return $.imgUtil = ns;

@@ -1,0 +1,90 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<script src="../../libs/jquery/1.7.0/jquery.js"></script>
+<script src="../../jQuery.ImgLoader/jquery.imgloader.js"></script>
+<script src="../../libs/spin.js"></script>
+<script src="../../jquery.imgutil.js"></script>
+<style>
+* {
+  margin:0;
+  padding:0;
+  border:0;
+}
+body {
+  padding:15px;
+}
+h1 {
+  padding:0 0 20px;
+}
+p {
+  padding:0 0 20px;
+}
+pre {
+  border:1px solid #000;
+  padding:10px;
+  margin:0 0 20px;
+}
+.imgrect {
+  border:1px solid red;
+  float:left;
+  margin:10px;
+  position:relative;
+  overflow:hidden;
+}
+  .imgrect img {
+    position:absolute;
+  }
+</style>
+<script>
+$(function(){
+
+  $('.imgrect').imgContainRect({
+    oninit: function(data) {
+      // spin.js http://fgnass.github.io/spin.js/
+      var spinnerOptions = {
+        color: '#333',
+        lines: 10,
+        length: 10,
+        width: 2,
+        radius: 10
+      };
+      (new Spinner(spinnerOptions)).spin(data.el[0]);
+    }
+  });
+
+});
+</script>
+</head>
+<body>
+<h1>$.fn.imgContainRect</h1>
+<p>$.fn.imgContainRect oninit option.</p>
+<pre>$('.imgrect').imgContainRect({
+  oninit: function(data) {
+    // spin.js http://fgnass.github.io/spin.js/
+    var spinnerOptions = {
+      color: '#333',
+      lines: 10,
+      length: 10,
+      width: 2,
+      radius: 10
+    };
+    (new Spinner(spinnerOptions)).spin(data.el[0]);
+  }
+});</pre>
+<div class="imgrect" data-imgcontainrect-src="../imgs/7.jpg" style="width:50px; height:100px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/8.jpg" style="width:100px; height:100px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/9.jpg" style="width:150px; height:100px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/10.jpg" style="width:200px; height:100px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/11.jpg" style="width:250px; height:100px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/12.jpg" style="width:300px; height:100px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/13.jpg" style="width:100px; height:50px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/14.jpg" style="width:100px; height:100px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/15.jpg" style="width:100px; height:150px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/16.jpg" style="width:100px; height:200px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/17.jpg" style="width:100px; height:250px;"></div>
+<div class="imgrect" data-imgcontainrect-src="../imgs/18.jpg" style="width:100px; height:300px;"></div>
+</body>
+</html>
