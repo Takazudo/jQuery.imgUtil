@@ -25,12 +25,12 @@ $.fn.imgContainRect adjusts img style to be contained by the container.
 
 ## Demos
 
-* [$.imgUtil.calcNaturalWH](http://takazudo.github.io/jQuery.imgUtil/demos/1/)
-* [$.imgUtil.calcRectFitImgWH](http://takazudo.github.io/jQuery.imgUtil/demos/2/)
-* [$.fn.imgCoverRect](http://takazudo.github.io/jQuery.imgUtil/demos/3/)
-* [$.fn.imgCoverRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/4/)
-* [$.fn.imgContainRect](http://takazudo.github.io/jQuery.imgUtil/demos/5/)
-* [$.fn.imgContainRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/6/)
+* [$.imgUtil.calcNaturalWH](http://takazudo.github.io/jQuery.imgUtil/demos/calcNaturalWH/)
+* [$.imgUtil.calcRectFitImgWH](http://takazudo.github.io/jQuery.imgUtil/demos/calcRectFitImgWH/)
+* [$.fn.imgCoverRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgCoverRect/)
+* [$.fn.imgCoverRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/imgCoverRect_oninit/)
+* [$.fn.imgContainRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect/)
+* [$.fn.imgContainRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect_oninit/)
 
 ## Usage
 
