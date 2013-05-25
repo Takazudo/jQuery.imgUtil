@@ -92,195 +92,296 @@ do ($=jQuery, window=window, document=document) ->
         defer.reject()
 
   # ============================================================
-  # calcRectFitImgWH
-  
-  ns.calcRectFitImgWH = do ->
+  # calcStylesToBeContainedInRect
 
-    bigger = (numA, numB) ->
-      return numA  if numA > numB
-      numB
+  ns.calcStylesToBeContainedInRect = do ->
 
-    calc = (origW, origH, rectW, rectH) ->
+    defaults =
+      imgWidth: null
+      imgHeight: null
+      rectWidth: null
+      rectHeight: null
 
-      if (origW < rectW) and (origH < rectH)
+    return (options) ->
+
+      o = $.extend {}, defaults, options
+      ret = {}
+
+      if o.imgWidth < o.rectWidth
+        ret.left = Math.floor ((o.rectWidth - o.imgWidth) / 2)
+      else
+        ret.left = 0
+      if o.imgHeight < o.rectHeight
+        ret.top = Math.floor ((o.rectHeight - o.imgHeight) / 2)
+      else
+        ret.top = 0
+      
+      return ret
+
+  # ============================================================
+  # calcRectContainImgWH
+
+  ns.calcRectContainImgWH = do ->
+
+    # utils
+    
+    enlargeImgWH = (options) ->
+      options.imgWidth = options.imgWidth * 100
+      options.imgHeight = options.imgHeight * 100
+      return options
+
+    # options
+
+    defaults =
+      imgWidth: null
+      imgHeight: null
+      rectWidth: null
+      rectHeight: null
+      enlargeSmallImg: true
+
+    # main
+
+    return (options) ->
+
+      o = $.extend {}, defaults, options
+
+      if o.enlargeSmallImg
+        o = enlargeImgWH o
+
+      if (o.imgWidth < o.rectWidth) and (o.imgHeight < o.rectHeight)
         return {
-          width: origW
-          height: origH
+          width: o.imgWidth
+          height: o.imgHeight
         }
 
-      shrinkRateW = rectW / origW
-      shrinkRateH = rectH / origH
+      shrinkRateW = o.rectWidth / o.imgWidth
+      shrinkRateH = o.rectHeight / o.imgHeight
 
       if shrinkRateW < shrinkRateH
         return {
-          width: rectW
-          height: Math.ceil(origH * shrinkRateW)
+          width: o.rectWidth
+          height: Math.ceil(o.imgHeight * shrinkRateW)
         }
 
       if shrinkRateW > shrinkRateH
         return {
-          width: Math.ceil(origW * shrinkRateH)
-          height: rectH
+          width: Math.ceil(o.imgWidth * shrinkRateH)
+          height: o.rectHeight
         }
 
       if shrinkRateW is shrinkRateH
         return {
-          width: origW * shrinkRateW
-          height: origH * shrinkRateH
+          width: o.imgWidth * shrinkRateW
+          height: o.imgHeight * shrinkRateH
+        }
+    
+
+  # ============================================================
+  # calcStylesToCoverRect
+
+  ns.calcStylesToCoverRect = do ->
+
+    defaults =
+      imgWidth: null
+      imgHeight: null
+      rectWidth: null
+      rectHeight: null
+
+    return (options) ->
+
+      o = $.extend {}, defaults, options
+      ret = {}
+      
+      if o.imgWidth > o.rectWidth
+        ret.left = -1 * (Math.floor ((o.imgWidth - o.rectWidth) / 2))
+      else
+        ret.left = 0
+      if o.imgHeight > o.rectHeight
+        ret.top = -1 * (Math.floor ((o.imgHeight - o.rectHeight) / 2))
+      else
+        ret.top = 0
+
+      return ret
+
+  # ============================================================
+  # calcRectCoverImgWH
+
+  ns.calcRectCoverImgWH = do ->
+
+    defaults =
+      imgWidth: null
+      imgHeight: null
+      rectWidth: null
+      rectHeight: null
+
+    return (options) ->
+
+      o = $.extend {}, defaults, options
+
+      tryToFitW = ->
+        shrinkRatio = o.rectWidth / o.imgWidth
+        adjustedH = Math.floor (shrinkRatio * o.imgHeight)
+        if adjustedH < o.rectHeight
+          return false
+        return {
+          width: o.rectWidth
+          height: adjustedH
+        }
+        
+      tryToFitH = ->
+        shrinkRatio = o.rectHeight / o.imgHeight
+        adjustedW = Math.floor (shrinkRatio * o.imgWidth)
+        if adjustedW < o.rectWidth
+          return false
+        return {
+          width: adjustedW
+          height: o.rectHeight
         }
 
-    enlargeWh = (wh) ->
-      return {
-        width: wh.width * 100
-        height: wh.height * 100
-      }
+      res = tryToFitW()
+      if res is false
+        res = tryToFitH()
+        if res is false
+          res.width = o.rectWidth
+          res.height = o.rectHeight
 
-    return (imgsrc, options) ->
+      return res
 
-      o = $.extend
-        width: null
-        height: null
-        enlargeSmallImg: true # allow bigger value than original size or not
-        returnClonedImg: true
-      , options
+  # ============================================================
+  # AbstractImgRectFitter
+
+  class ns.AbstractImgRectFitter
+
+    constructor: ->
+
+      src = @$el.attr @options.attr_src
+      if src
+        @options.src = src
+
+      if @options.oninit
+        data =
+          el: @$el
+        @options.oninit data
+
+      @_doFirstRefresh()
+    
+    _doFirstRefresh: ->
+
+      @_stillLoadingImg = true
+      @_calcNaturalImgWH().done =>
+        @_stillLoadingImg = false
+        @refresh()
+
+      return this
+
+    _calcNaturalImgWH: ->
 
       defer = $.Deferred()
 
-      success = (origWh, $img) ->
-        if o.enlargeSmallImg
-          origWh = enlargeWh(origWh)
-        if o.returnClonedImg
+      success = (origWH, $img) =>
+        @originalImgWidth = origWH.width
+        @originalImgHeight = origWH.height
+        if @options.cloneImg
           $img = $img.clone()
-        res = calc(origWh.width, origWh.height, o.width, o.height)
-        defer.resolve
-          width: res.width
-          height: res.height
-          img: $img
+        @$img = $img
+        defer.resolve()
+        return
 
-      fail = ->
+      fail = =>
+        if @options.onfail
+          @options.onfail()
         defer.reject()
+        return
 
-      ns.calcNaturalWH(imgsrc).then success, fail
+      ns.calcNaturalWH(@options.src).then success, fail
 
       return defer.promise()
+
+    _finalizeImg: (styles) ->
+
+      if @options.useNewImgElOnRefresh
+        $img = @$img.clone()
+        $img.css styles
+        @$el.empty().append $img
+      else
+        @$img.css styles
+        $imgInside = @$el.find 'img'
+        if $imgInside.length is 0
+          @$el.empty().append @$img
+
+      return this
+      
+
 
   # ============================================================
   # ImgCoverRect
   
-  class ns.ImgCoverRect
+  class ns.ImgCoverRect extends ns.AbstractImgRectFitter
 
     @defaults =
       src: null
       oninit: null
       onfail: null
       cloneImg: true
+      useNewImgElOnRefresh: false
+      attr_src: 'data-imgcoverrect-src'
 
     constructor: (@$el, options) ->
 
-      @options = $.extend ns.ImgCoverRect.defaults, options
+      @options = $.extend {}, ns.ImgCoverRect.defaults, options
+      super
 
-      src = @$el.attr 'data-imgcoverrect-src'
-      if src
-        @options.src = src
+    refresh: ->
+
+      return if @_stillLoadingImg is true
 
       @rectWidth = @$el.width()
       @rectHeight = @$el.height()
 
-      if @options.oninit
-        data =
-          rectWidth: @rectWidth
-          rectHeight: @rectHeight
-          el: @$el
-        @options.oninit data
+      adjustedWH = ns.calcRectCoverImgWH
+        imgWidth: @originalImgWidth
+        imgHeight: @originalImgHeight
+        rectWidth: @rectWidth
+        rectHeight: @rectHeight
 
-      @loadImg().then (origWh, $img) =>
-        imgSize = @calcImgSize origWh
-        otherStyles = @calcAdjustStyles imgSize
-        styles = $.extend imgSize, otherStyles
-        $img.css styles
-        @$el.empty().append $img
-        return
-      , =>
-        if @options.onfail
-          @options.onfail()
-        return
+      styles =
+        width: adjustedWH.width
+        height: adjustedWH.height
 
-    loadImg: ->
+      otherStyles = ns.calcStylesToCoverRect
+        imgWidth: adjustedWH.width
+        imgHeight: adjustedWH.height
+        rectWidth: @rectWidth
+        rectHeight: @rectHeight
 
-      defer = $.Deferred()
-      ns.calcNaturalWH(@options.src).then (origWh, $img) =>
-        if @options.cloneImg
-          $img = $img.clone()
-        defer.resolve origWh, $img
-      , =>
-        defer.reject()
-      return defer.promise()
+      styles = $.extend styles, otherStyles
+      @_finalizeImg styles
 
-    calcImgSize: (imgWh) ->
-      
-      ret = {}
-
-      rectW = @rectWidth
-      rectH = @rectHeight
-      imgW = imgWh.width
-      imgH = imgWh.height
-
-      tryToFitW = ->
-        shrinkRatio = rectW / imgW
-        adjustedH = Math.floor (shrinkRatio * imgH)
-        if adjustedH < rectH
-          return false
-        return {
-          adjustedImgWidth: rectW
-          adjustedImgHeight: adjustedH
-        }
-        
-      tryToFitH = ->
-        shrinkRatio = rectH / imgH
-        adjustedW = Math.floor (shrinkRatio * imgW)
-        if adjustedW < rectW
-          return false
-        return {
-          adjustedImgWidth: adjustedW
-          adjustedImgHeight: rectH
-        }
-
-      res = tryToFitW()
-      if res is false
-        res = tryToFitH()
-
-      ret.width = res.adjustedImgWidth
-      ret.height = res.adjustedImgHeight
-
-      return ret
-
-    calcAdjustStyles: (imgSize) ->
-
-      ret = {}
-      
-      rectW = @rectWidth
-      rectH = @rectHeight
-      imgW = imgSize.width
-      imgH = imgSize.height
-
-      if imgW > rectW
-        ret.left = -1 * (Math.floor ((imgW - rectW) / 2))
-      if imgH > rectH
-        ret.top = -1 * (Math.floor ((imgH - rectH) / 2))
-
-      return ret
+      return this
 
   # bridge
 
-  $.fn.imgCoverRect = (options) ->
-    return @each (i, el) ->
-      $el = $(el)
-      $el.data 'imgcoverrect', (new ns.ImgCoverRect $el, options)
+  do ->
+
+    dataKey = 'imgcoverrect'
+
+    $.fn.imgCoverRect = (options) ->
+      return @each (i, el) ->
+        $el = $(el)
+        $el.data dataKey, (new ns.ImgCoverRect $el, options)
+
+    $.fn.refreshImgCoverRect = ->
+      return @each (i, el) ->
+        $el = $(el)
+        instance = $el.data dataKey
+        return unless instance
+        instance.refresh()
+    
 
   # ============================================================
   # imgContainRect
 
-  class ns.ImgContainRect
+  class ns.ImgContainRect extends ns.AbstractImgRectFitter
     
     @defaults =
       src: null
@@ -288,80 +389,59 @@ do ($=jQuery, window=window, document=document) ->
       onfail: null
       cloneImg: true
       enlargeSmallImg: true
+      useNewImgElOnRefresh: false
+      attr_src: 'data-imgcontainrect-src'
 
     constructor: (@$el, options) ->
 
-      @options = $.extend ns.ImgContainRect.defaults, options
+      @options = $.extend {}, ns.ImgContainRect.defaults, options
+      super
 
-      src = @$el.attr 'data-imgcontainrect-src'
-      if src
-        @options.src = src
+    refresh: ->
+
+      return if @_stillLoadingImg is true
 
       @rectWidth = @$el.width()
       @rectHeight = @$el.height()
 
-      if @options.oninit
-        data =
-          rectWidth: @rectWidth
-          rectHeight: @rectHeight
-          el: @$el
-        @options.oninit data
+      adjustedWH = ns.calcRectContainImgWH
+        imgWidth: @originalImgWidth
+        imgHeight: @originalImgHeight
+        rectWidth: @rectWidth
+        rectHeight: @rectHeight
 
+      styles =
+        width: adjustedWH.width
+        height: adjustedWH.height
 
-      @calcImgSize().then (res) =>
-        $img = res.img
-        styles =
-          width: res.width
-          height: res.height
-        otherStyles = @calcAdjustStyles styles
-        styles = $.extend styles, otherStyles
-        $img.css styles
-        @$el.empty().append $img
-        return
-      , =>
-        if @options.onfail
-          @options.onfail()
-        return
+      otherStyles = ns.calcStylesToBeContainedInRect
+        imgWidth: adjustedWH.width
+        imgHeight: adjustedWH.height
+        rectWidth: @rectWidth
+        rectHeight: @rectHeight
+
+      styles = $.extend styles, otherStyles
+      @_finalizeImg styles
+
+      return this
     
-    calcImgSize: ->
-
-      defer = $.Deferred()
-
-      o =
-        width: @rectWidth
-        height: @rectHeight
-        enlargeSmallImg: true
-        returnClonedImg: @options.cloneImg
-
-      (ns.calcRectFitImgWH @options.src, o).then (res) =>
-        defer.resolve res
-      , =>
-        defer.reject()
-
-      return defer.promise()
-
-    calcAdjustStyles: (imgSize) ->
-
-      ret = {}
-      
-      rectW = @rectWidth
-      rectH = @rectHeight
-      imgW = imgSize.width
-      imgH = imgSize.height
-
-      if imgW < rectW
-        ret.left = Math.floor ((rectW - imgW) / 2)
-      if imgH < rectH
-        ret.top = Math.floor ((rectH - imgH) / 2)
-      
-      return ret
-
   # bridge
+  
+  do ->
 
-  $.fn.imgContainRect = (options) ->
-    return @each (i, el) ->
-      $el = $(el)
-      $el.data 'imgcontainrect', (new ns.ImgContainRect $el, options)
+    dataKey = 'imgcontainrect'
+
+    $.fn.imgContainRect = (options) ->
+      return @each (i, el) ->
+        $el = $(el)
+        $el.data dataKey, (new ns.ImgContainRect $el, options)
+
+    $.fn.refreshImgContainRect = ->
+      return @each (i, el) ->
+        $el = $(el)
+        instance = $el.data dataKey
+        return unless instance
+        instance.refresh()
 
   # ============================================================
   # globalify

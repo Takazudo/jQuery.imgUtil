@@ -1,5 +1,16 @@
 # Change log
 
+## v0.4.0
+
+* implemented `$.fn.refreshImgContainRect`
+* implemented `$.fn.refreshImgCoverRect`
+* implemented `$.imgUtil.calcRectCoverImgWH`.
+* implemented `$.imgUtil.calcStylesToCoverRect`.
+* implemented `$.imgUtil.calcRectContainImgWH`.
+* implemented `$.imgUtil.calcStylesToBeContainedInRect`.
+* removed `$.imgUtil.calcRectFitImgWH`.
+* abstracted modules.
+
 ## v0.3.0
 
 * implemented `$.fn.imgContainRect`.

@@ -1,9 +1,11 @@
 /*! jQuery.imgUtil (https://github.com/Takazudo/jQuery.imgUtil)
- * lastupdate: 2013-05-24
+ * lastupdate: 2013-05-25
  * version: 0.3.0
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
 (function() {
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   (function($, window, document) {
     var ns;
@@ -92,294 +94,364 @@
         });
       });
     })();
-    ns.calcRectFitImgWH = (function() {
-      var bigger, calc, enlargeWh;
-      bigger = function(numA, numB) {
-        if (numA > numB) {
-          return numA;
-        }
-        return numB;
+    ns.calcStylesToBeContainedInRect = (function() {
+      var defaults;
+      defaults = {
+        imgWidth: null,
+        imgHeight: null,
+        rectWidth: null,
+        rectHeight: null
       };
-      calc = function(origW, origH, rectW, rectH) {
-        var shrinkRateH, shrinkRateW;
-        if ((origW < rectW) && (origH < rectH)) {
+      return function(options) {
+        var o, ret;
+        o = $.extend({}, defaults, options);
+        ret = {};
+        if (o.imgWidth < o.rectWidth) {
+          ret.left = Math.floor((o.rectWidth - o.imgWidth) / 2);
+        } else {
+          ret.left = 0;
+        }
+        if (o.imgHeight < o.rectHeight) {
+          ret.top = Math.floor((o.rectHeight - o.imgHeight) / 2);
+        } else {
+          ret.top = 0;
+        }
+        return ret;
+      };
+    })();
+    ns.calcRectContainImgWH = (function() {
+      var defaults, enlargeImgWH;
+      enlargeImgWH = function(options) {
+        options.imgWidth = options.imgWidth * 100;
+        options.imgHeight = options.imgHeight * 100;
+        return options;
+      };
+      defaults = {
+        imgWidth: null,
+        imgHeight: null,
+        rectWidth: null,
+        rectHeight: null,
+        enlargeSmallImg: true
+      };
+      return function(options) {
+        var o, shrinkRateH, shrinkRateW;
+        o = $.extend({}, defaults, options);
+        if (o.enlargeSmallImg) {
+          o = enlargeImgWH(o);
+        }
+        if ((o.imgWidth < o.rectWidth) && (o.imgHeight < o.rectHeight)) {
           return {
-            width: origW,
-            height: origH
+            width: o.imgWidth,
+            height: o.imgHeight
           };
         }
-        shrinkRateW = rectW / origW;
-        shrinkRateH = rectH / origH;
+        shrinkRateW = o.rectWidth / o.imgWidth;
+        shrinkRateH = o.rectHeight / o.imgHeight;
         if (shrinkRateW < shrinkRateH) {
           return {
-            width: rectW,
-            height: Math.ceil(origH * shrinkRateW)
+            width: o.rectWidth,
+            height: Math.ceil(o.imgHeight * shrinkRateW)
           };
         }
         if (shrinkRateW > shrinkRateH) {
           return {
-            width: Math.ceil(origW * shrinkRateH),
-            height: rectH
+            width: Math.ceil(o.imgWidth * shrinkRateH),
+            height: o.rectHeight
           };
         }
         if (shrinkRateW === shrinkRateH) {
           return {
-            width: origW * shrinkRateW,
-            height: origH * shrinkRateH
+            width: o.imgWidth * shrinkRateW,
+            height: o.imgHeight * shrinkRateH
           };
         }
-      };
-      enlargeWh = function(wh) {
-        return {
-          width: wh.width * 100,
-          height: wh.height * 100
-        };
-      };
-      return function(imgsrc, options) {
-        var defer, fail, o, success;
-        o = $.extend({
-          width: null,
-          height: null,
-          enlargeSmallImg: true,
-          returnClonedImg: true
-        }, options);
-        defer = $.Deferred();
-        success = function(origWh, $img) {
-          var res;
-          if (o.enlargeSmallImg) {
-            origWh = enlargeWh(origWh);
-          }
-          if (o.returnClonedImg) {
-            $img = $img.clone();
-          }
-          res = calc(origWh.width, origWh.height, o.width, o.height);
-          return defer.resolve({
-            width: res.width,
-            height: res.height,
-            img: $img
-          });
-        };
-        fail = function() {
-          return defer.reject();
-        };
-        ns.calcNaturalWH(imgsrc).then(success, fail);
-        return defer.promise();
       };
     })();
-    ns.ImgCoverRect = (function() {
-
-      ImgCoverRect.defaults = {
-        src: null,
-        oninit: null,
-        onfail: null,
-        cloneImg: true
+    ns.calcStylesToCoverRect = (function() {
+      var defaults;
+      defaults = {
+        imgWidth: null,
+        imgHeight: null,
+        rectWidth: null,
+        rectHeight: null
       };
-
-      function ImgCoverRect($el, options) {
-        var data, src,
-          _this = this;
-        this.$el = $el;
-        this.options = $.extend(ns.ImgCoverRect.defaults, options);
-        src = this.$el.attr('data-imgcoverrect-src');
-        if (src) {
-          this.options.src = src;
-        }
-        this.rectWidth = this.$el.width();
-        this.rectHeight = this.$el.height();
-        if (this.options.oninit) {
-          data = {
-            rectWidth: this.rectWidth,
-            rectHeight: this.rectHeight,
-            el: this.$el
-          };
-          this.options.oninit(data);
-        }
-        this.loadImg().then(function(origWh, $img) {
-          var imgSize, otherStyles, styles;
-          imgSize = _this.calcImgSize(origWh);
-          otherStyles = _this.calcAdjustStyles(imgSize);
-          styles = $.extend(imgSize, otherStyles);
-          $img.css(styles);
-          _this.$el.empty().append($img);
-        }, function() {
-          if (_this.options.onfail) {
-            _this.options.onfail();
-          }
-        });
-      }
-
-      ImgCoverRect.prototype.loadImg = function() {
-        var defer,
-          _this = this;
-        defer = $.Deferred();
-        ns.calcNaturalWH(this.options.src).then(function(origWh, $img) {
-          if (_this.options.cloneImg) {
-            $img = $img.clone();
-          }
-          return defer.resolve(origWh, $img);
-        }, function() {
-          return defer.reject();
-        });
-        return defer.promise();
-      };
-
-      ImgCoverRect.prototype.calcImgSize = function(imgWh) {
-        var imgH, imgW, rectH, rectW, res, ret, tryToFitH, tryToFitW;
+      return function(options) {
+        var o, ret;
+        o = $.extend({}, defaults, options);
         ret = {};
-        rectW = this.rectWidth;
-        rectH = this.rectHeight;
-        imgW = imgWh.width;
-        imgH = imgWh.height;
+        if (o.imgWidth > o.rectWidth) {
+          ret.left = -1 * (Math.floor((o.imgWidth - o.rectWidth) / 2));
+        } else {
+          ret.left = 0;
+        }
+        if (o.imgHeight > o.rectHeight) {
+          ret.top = -1 * (Math.floor((o.imgHeight - o.rectHeight) / 2));
+        } else {
+          ret.top = 0;
+        }
+        return ret;
+      };
+    })();
+    ns.calcRectCoverImgWH = (function() {
+      var defaults;
+      defaults = {
+        imgWidth: null,
+        imgHeight: null,
+        rectWidth: null,
+        rectHeight: null
+      };
+      return function(options) {
+        var o, res, tryToFitH, tryToFitW;
+        o = $.extend({}, defaults, options);
         tryToFitW = function() {
           var adjustedH, shrinkRatio;
-          shrinkRatio = rectW / imgW;
-          adjustedH = Math.floor(shrinkRatio * imgH);
-          if (adjustedH < rectH) {
+          shrinkRatio = o.rectWidth / o.imgWidth;
+          adjustedH = Math.floor(shrinkRatio * o.imgHeight);
+          if (adjustedH < o.rectHeight) {
             return false;
           }
           return {
-            adjustedImgWidth: rectW,
-            adjustedImgHeight: adjustedH
+            width: o.rectWidth,
+            height: adjustedH
           };
         };
         tryToFitH = function() {
           var adjustedW, shrinkRatio;
-          shrinkRatio = rectH / imgH;
-          adjustedW = Math.floor(shrinkRatio * imgW);
-          if (adjustedW < rectW) {
+          shrinkRatio = o.rectHeight / o.imgHeight;
+          adjustedW = Math.floor(shrinkRatio * o.imgWidth);
+          if (adjustedW < o.rectWidth) {
             return false;
           }
           return {
-            adjustedImgWidth: adjustedW,
-            adjustedImgHeight: rectH
+            width: adjustedW,
+            height: o.rectHeight
           };
         };
         res = tryToFitW();
         if (res === false) {
           res = tryToFitH();
+          if (res === false) {
+            res.width = o.rectWidth;
+            res.height = o.rectHeight;
+          }
         }
-        ret.width = res.adjustedImgWidth;
-        ret.height = res.adjustedImgHeight;
-        return ret;
+        return res;
+      };
+    })();
+    ns.AbstractImgRectFitter = (function() {
+
+      function AbstractImgRectFitter() {
+        var data, src;
+        src = this.$el.attr(this.options.attr_src);
+        if (src) {
+          this.options.src = src;
+        }
+        if (this.options.oninit) {
+          data = {
+            el: this.$el
+          };
+          this.options.oninit(data);
+        }
+        this._doFirstRefresh();
+      }
+
+      AbstractImgRectFitter.prototype._doFirstRefresh = function() {
+        var _this = this;
+        this._stillLoadingImg = true;
+        this._calcNaturalImgWH().done(function() {
+          _this._stillLoadingImg = false;
+          return _this.refresh();
+        });
+        return this;
       };
 
-      ImgCoverRect.prototype.calcAdjustStyles = function(imgSize) {
-        var imgH, imgW, rectH, rectW, ret;
-        ret = {};
-        rectW = this.rectWidth;
-        rectH = this.rectHeight;
-        imgW = imgSize.width;
-        imgH = imgSize.height;
-        if (imgW > rectW) {
-          ret.left = -1 * (Math.floor((imgW - rectW) / 2));
+      AbstractImgRectFitter.prototype._calcNaturalImgWH = function() {
+        var defer, fail, success,
+          _this = this;
+        defer = $.Deferred();
+        success = function(origWH, $img) {
+          _this.originalImgWidth = origWH.width;
+          _this.originalImgHeight = origWH.height;
+          if (_this.options.cloneImg) {
+            $img = $img.clone();
+          }
+          _this.$img = $img;
+          defer.resolve();
+        };
+        fail = function() {
+          if (_this.options.onfail) {
+            _this.options.onfail();
+          }
+          defer.reject();
+        };
+        ns.calcNaturalWH(this.options.src).then(success, fail);
+        return defer.promise();
+      };
+
+      AbstractImgRectFitter.prototype._finalizeImg = function(styles) {
+        var $img, $imgInside;
+        if (this.options.useNewImgElOnRefresh) {
+          $img = this.$img.clone();
+          $img.css(styles);
+          this.$el.empty().append($img);
+        } else {
+          this.$img.css(styles);
+          $imgInside = this.$el.find('img');
+          if ($imgInside.length === 0) {
+            this.$el.empty().append(this.$img);
+          }
         }
-        if (imgH > rectH) {
-          ret.top = -1 * (Math.floor((imgH - rectH) / 2));
+        return this;
+      };
+
+      return AbstractImgRectFitter;
+
+    })();
+    ns.ImgCoverRect = (function(_super) {
+
+      __extends(ImgCoverRect, _super);
+
+      ImgCoverRect.defaults = {
+        src: null,
+        oninit: null,
+        onfail: null,
+        cloneImg: true,
+        useNewImgElOnRefresh: false,
+        attr_src: 'data-imgcoverrect-src'
+      };
+
+      function ImgCoverRect($el, options) {
+        this.$el = $el;
+        this.options = $.extend({}, ns.ImgCoverRect.defaults, options);
+        ImgCoverRect.__super__.constructor.apply(this, arguments);
+      }
+
+      ImgCoverRect.prototype.refresh = function() {
+        var adjustedWH, otherStyles, styles;
+        if (this._stillLoadingImg === true) {
+          return;
         }
-        return ret;
+        this.rectWidth = this.$el.width();
+        this.rectHeight = this.$el.height();
+        adjustedWH = ns.calcRectCoverImgWH({
+          imgWidth: this.originalImgWidth,
+          imgHeight: this.originalImgHeight,
+          rectWidth: this.rectWidth,
+          rectHeight: this.rectHeight
+        });
+        styles = {
+          width: adjustedWH.width,
+          height: adjustedWH.height
+        };
+        otherStyles = ns.calcStylesToCoverRect({
+          imgWidth: adjustedWH.width,
+          imgHeight: adjustedWH.height,
+          rectWidth: this.rectWidth,
+          rectHeight: this.rectHeight
+        });
+        styles = $.extend(styles, otherStyles);
+        this._finalizeImg(styles);
+        return this;
       };
 
       return ImgCoverRect;
 
+    })(ns.AbstractImgRectFitter);
+    (function() {
+      var dataKey;
+      dataKey = 'imgcoverrect';
+      $.fn.imgCoverRect = function(options) {
+        return this.each(function(i, el) {
+          var $el;
+          $el = $(el);
+          return $el.data(dataKey, new ns.ImgCoverRect($el, options));
+        });
+      };
+      return $.fn.refreshImgCoverRect = function() {
+        return this.each(function(i, el) {
+          var $el, instance;
+          $el = $(el);
+          instance = $el.data(dataKey);
+          if (!instance) {
+            return;
+          }
+          return instance.refresh();
+        });
+      };
     })();
-    $.fn.imgCoverRect = function(options) {
-      return this.each(function(i, el) {
-        var $el;
-        $el = $(el);
-        return $el.data('imgcoverrect', new ns.ImgCoverRect($el, options));
-      });
-    };
-    ns.ImgContainRect = (function() {
+    ns.ImgContainRect = (function(_super) {
+
+      __extends(ImgContainRect, _super);
 
       ImgContainRect.defaults = {
         src: null,
         oninit: null,
         onfail: null,
         cloneImg: true,
-        enlargeSmallImg: true
+        enlargeSmallImg: true,
+        useNewImgElOnRefresh: false,
+        attr_src: 'data-imgcontainrect-src'
       };
 
       function ImgContainRect($el, options) {
-        var data, src,
-          _this = this;
         this.$el = $el;
-        this.options = $.extend(ns.ImgContainRect.defaults, options);
-        src = this.$el.attr('data-imgcontainrect-src');
-        if (src) {
-          this.options.src = src;
+        this.options = $.extend({}, ns.ImgContainRect.defaults, options);
+        ImgContainRect.__super__.constructor.apply(this, arguments);
+      }
+
+      ImgContainRect.prototype.refresh = function() {
+        var adjustedWH, otherStyles, styles;
+        if (this._stillLoadingImg === true) {
+          return;
         }
         this.rectWidth = this.$el.width();
         this.rectHeight = this.$el.height();
-        if (this.options.oninit) {
-          data = {
-            rectWidth: this.rectWidth,
-            rectHeight: this.rectHeight,
-            el: this.$el
-          };
-          this.options.oninit(data);
-        }
-        this.calcImgSize().then(function(res) {
-          var $img, otherStyles, styles;
-          $img = res.img;
-          styles = {
-            width: res.width,
-            height: res.height
-          };
-          otherStyles = _this.calcAdjustStyles(styles);
-          styles = $.extend(styles, otherStyles);
-          $img.css(styles);
-          _this.$el.empty().append($img);
-        }, function() {
-          if (_this.options.onfail) {
-            _this.options.onfail();
-          }
+        adjustedWH = ns.calcRectContainImgWH({
+          imgWidth: this.originalImgWidth,
+          imgHeight: this.originalImgHeight,
+          rectWidth: this.rectWidth,
+          rectHeight: this.rectHeight
         });
-      }
-
-      ImgContainRect.prototype.calcImgSize = function() {
-        var defer, o,
-          _this = this;
-        defer = $.Deferred();
-        o = {
-          width: this.rectWidth,
-          height: this.rectHeight,
-          enlargeSmallImg: true,
-          returnClonedImg: this.options.cloneImg
+        styles = {
+          width: adjustedWH.width,
+          height: adjustedWH.height
         };
-        (ns.calcRectFitImgWH(this.options.src, o)).then(function(res) {
-          return defer.resolve(res);
-        }, function() {
-          return defer.reject();
+        otherStyles = ns.calcStylesToBeContainedInRect({
+          imgWidth: adjustedWH.width,
+          imgHeight: adjustedWH.height,
+          rectWidth: this.rectWidth,
+          rectHeight: this.rectHeight
         });
-        return defer.promise();
-      };
-
-      ImgContainRect.prototype.calcAdjustStyles = function(imgSize) {
-        var imgH, imgW, rectH, rectW, ret;
-        ret = {};
-        rectW = this.rectWidth;
-        rectH = this.rectHeight;
-        imgW = imgSize.width;
-        imgH = imgSize.height;
-        if (imgW < rectW) {
-          ret.left = Math.floor((rectW - imgW) / 2);
-        }
-        if (imgH < rectH) {
-          ret.top = Math.floor((rectH - imgH) / 2);
-        }
-        return ret;
+        styles = $.extend(styles, otherStyles);
+        this._finalizeImg(styles);
+        return this;
       };
 
       return ImgContainRect;
 
+    })(ns.AbstractImgRectFitter);
+    (function() {
+      var dataKey;
+      dataKey = 'imgcontainrect';
+      $.fn.imgContainRect = function(options) {
+        return this.each(function(i, el) {
+          var $el;
+          $el = $(el);
+          return $el.data(dataKey, new ns.ImgContainRect($el, options));
+        });
+      };
+      return $.fn.refreshImgContainRect = function() {
+        return this.each(function(i, el) {
+          var $el, instance;
+          $el = $(el);
+          instance = $el.data(dataKey);
+          if (!instance) {
+            return;
+          }
+          return instance.refresh();
+        });
+      };
     })();
-    $.fn.imgContainRect = function(options) {
-      return this.each(function(i, el) {
-        var $el;
-        $el = $(el);
-        return $el.data('imgcontainrect', new ns.ImgContainRect($el, options));
-      });
-    };
     return $.imgUtil = ns;
   })(jQuery, window, document);
 

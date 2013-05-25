@@ -11,26 +11,23 @@ Newer browsers have naturalWidth/naturalHeight feature. With these, we can get t
 $.imgUtil.calcNaturalWH preloads img as background task then returns the values you want.  
 This also works on old browsers which do not have naturalWidth/naturalHeight feature using tricky way.
 
-### $.imgUtil.calcRectFitImgWH
-
-$.imgUtil.calcRectFitImgWH returns rect fit width/height of thrown img.
-
-### $.fn.imgCoverRect
+### $.fn.imgCoverRect / $.fn.refreshImgCoverRect
 
 $.fn.imgCoverRect adjusts img style to cover the container.
 
-### $.fn.imgContainRect
+### $.fn.imgContainRect / $.fn.refreshImgContainRect
 
 $.fn.imgContainRect adjusts img style to be contained by the container.
 
 ## Demos
 
 * [$.imgUtil.calcNaturalWH](http://takazudo.github.io/jQuery.imgUtil/demos/calcNaturalWH/)
-* [$.imgUtil.calcRectFitImgWH](http://takazudo.github.io/jQuery.imgUtil/demos/calcRectFitImgWH/)
 * [$.fn.imgCoverRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgCoverRect/)
 * [$.fn.imgCoverRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/imgCoverRect_oninit/)
+* [$.fn.refreshImgCoverRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgCoverRect_refresh/)
 * [$.fn.imgContainRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect/)
 * [$.fn.imgContainRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect_oninit/)
+* [$.fn.refreshImgContainRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect_refresh/)
 
 ## Usage
 
@@ -56,6 +53,23 @@ Use
 
  * [CoffeeScript][coffeescript]
  * [grunt][grunt]
+
+then,
+
+```bash
+npm install
+```
+And, to build
+
+```bash
+grunt
+```
+
+to watch
+
+```bash
+grunt watch
+```
 
 [coffeescript]: http://coffeescript.org "CoffeeScript"
 [grunt]: http://gruntjs.com "grunt"
