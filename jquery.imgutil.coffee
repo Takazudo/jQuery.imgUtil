@@ -297,17 +297,25 @@ do ($=jQuery, window=window, document=document) ->
 
       return defer.promise()
 
+    _putImg: ($img) ->
+
+      if @options.overrideImgPut
+        @options.overrideImgPut(@$el, $img)
+      else
+        @$el.empty().append $img
+      return this
+
     _finalizeImg: (styles) ->
 
       if @options.useNewImgElOnRefresh
         $img = @$img.clone()
         $img.css styles
-        @$el.empty().append $img
+        @_putImg $img
       else
         @$img.css styles
         $imgInside = @$el.find 'img'
         if $imgInside.length is 0
-          @$el.empty().append @$img
+          @_putImg @$img
 
       return this
       
@@ -325,6 +333,7 @@ do ($=jQuery, window=window, document=document) ->
       cloneImg: true
       useNewImgElOnRefresh: false
       attr_src: 'data-imgcoverrect-src'
+      overrideImgPut: null
 
     constructor: (@$el, options) ->
 
@@ -391,6 +400,7 @@ do ($=jQuery, window=window, document=document) ->
       enlargeSmallImg: true
       useNewImgElOnRefresh: false
       attr_src: 'data-imgcontainrect-src'
+      overrideImgPut: null
 
     constructor: (@$el, options) ->
 

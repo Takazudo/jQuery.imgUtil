@@ -62,6 +62,12 @@ $(function(){
         radius: 10
       };
       (new Spinner(spinnerOptions)).spin(data.el[0]);
+    },
+    overrideImgPut: function($container, $img) {
+      $container.empty();
+      $img.hide();
+      $container.append($img);
+      $img.fadeIn();
     }
   });
 

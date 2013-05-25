@@ -288,17 +288,26 @@
         return defer.promise();
       };
 
+      AbstractImgRectFitter.prototype._putImg = function($img) {
+        if (this.options.overrideImgPut) {
+          this.options.overrideImgPut(this.$el, $img);
+        } else {
+          this.$el.empty().append($img);
+        }
+        return this;
+      };
+
       AbstractImgRectFitter.prototype._finalizeImg = function(styles) {
         var $img, $imgInside;
         if (this.options.useNewImgElOnRefresh) {
           $img = this.$img.clone();
           $img.css(styles);
-          this.$el.empty().append($img);
+          this._putImg($img);
         } else {
           this.$img.css(styles);
           $imgInside = this.$el.find('img');
           if ($imgInside.length === 0) {
-            this.$el.empty().append(this.$img);
+            this._putImg(this.$img);
           }
         }
         return this;
@@ -317,7 +326,8 @@
         onfail: null,
         cloneImg: true,
         useNewImgElOnRefresh: false,
-        attr_src: 'data-imgcoverrect-src'
+        attr_src: 'data-imgcoverrect-src',
+        overrideImgPut: null
       };
 
       function ImgCoverRect($el, options) {
@@ -390,7 +400,8 @@
         cloneImg: true,
         enlargeSmallImg: true,
         useNewImgElOnRefresh: false,
-        attr_src: 'data-imgcontainrect-src'
+        attr_src: 'data-imgcontainrect-src',
+        overrideImgPut: null
       };
 
       function ImgContainRect($el, options) {

@@ -23,10 +23,10 @@ $.fn.imgContainRect adjusts img style to be contained by the container.
 
 * [$.imgUtil.calcNaturalWH](http://takazudo.github.io/jQuery.imgUtil/demos/calcNaturalWH/)
 * [$.fn.imgCoverRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgCoverRect/)
-* [$.fn.imgCoverRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/imgCoverRect_oninit/)
+* [$.fn.imgCoverRect - oninit/overrideImgPut](http://takazudo.github.io/jQuery.imgUtil/demos/imgCoverRect_oninit/)
 * [$.fn.refreshImgCoverRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgCoverRect_refresh/)
 * [$.fn.imgContainRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect/)
-* [$.fn.imgContainRect - oninit option](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect_oninit/)
+* [$.fn.imgContainRect - oninit/overrideImgPut](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect_oninit/)
 * [$.fn.refreshImgContainRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect_refresh/)
 
 ## Usage

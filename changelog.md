@@ -1,5 +1,9 @@
 # Change log
 
+## v0.5.0
+
+* implemented `overrideImgPut` option.
+
 ## v0.4.0
 
 * implemented `$.fn.refreshImgContainRect`

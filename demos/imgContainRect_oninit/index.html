@@ -52,6 +52,12 @@ $(function(){
         radius: 10
       };
       (new Spinner(spinnerOptions)).spin(data.el[0]);
+    },
+    overrideImgPut: function($container, $img) {
+      $container.empty();
+      $img.hide();
+      $container.append($img);
+      $img.fadeIn();
     }
   });
 
@@ -60,20 +66,7 @@ $(function(){
 </head>
 <body>
 <h1>$.fn.imgContainRect</h1>
-<p>$.fn.imgContainRect oninit option.</p>
-<pre>$('.imgrect').imgContainRect({
-  oninit: function(data) {
-    // spin.js http://fgnass.github.io/spin.js/
-    var spinnerOptions = {
-      color: '#333',
-      lines: 10,
-      length: 10,
-      width: 2,
-      radius: 10
-    };
-    (new Spinner(spinnerOptions)).spin(data.el[0]);
-  }
-});</pre>
+<p>$.fn.imgContainRect oninit/overrideImgPut option.</p>
 <div class="imgrect" data-imgcontainrect-src="../imgs/7.jpg" style="width:50px; height:100px;"></div>
 <div class="imgrect" data-imgcontainrect-src="../imgs/8.jpg" style="width:100px; height:100px;"></div>
 <div class="imgrect" data-imgcontainrect-src="../imgs/9.jpg" style="width:150px; height:100px;"></div>
