@@ -1,5 +1,5 @@
 /*! jQuery.imgUtil (https://github.com/Takazudo/jQuery.imgUtil)
- * lastupdate: 2013-05-25
+ * lastupdate: 2013-08-01
  * version: 0.5.0
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -70,7 +70,7 @@
         return defer.promise();
       };
       return ns.calcNaturalWH = $.ImgLoaderNs.createCachedFunction(function(defer, src) {
-        return ($.loadImg(src)).then(function($img) {
+        return ($.loadImgWoCache(src)).then(function($img) {
           var img, wh;
           img = $img[0];
           if (!(naturalWHDetectable(img))) {

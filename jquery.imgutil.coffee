@@ -74,7 +74,7 @@ do ($=jQuery, window=window, document=document) ->
 
     # main
     ns.calcNaturalWH = $.ImgLoaderNs.createCachedFunction (defer, src) ->
-      ($.loadImg src).then ($img) ->
+      ($.loadImgWoCache src).then ($img) ->
         img = $img[0]
         if not (naturalWHDetectable img)
           $holderSetup().done ->
