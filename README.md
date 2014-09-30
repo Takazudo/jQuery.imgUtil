@@ -36,7 +36,6 @@ see demos
 ## Depends
 
 * jQuery 1.9.1 (>=1.7.0)
-* [jQuery.ImgLoader](https://github.com/Takazudo/jQuery.ImgLoader)
 
 ## Browsers
 
