@@ -2,6 +2,43 @@
 do ($=jQuery, window=window, document=document) ->
 
   ns = {}
+  
+  # ============================================================
+  # utility
+  # http://msdn.microsoft.com/ja-jp/scriptjunkie/gg723713.aspx
+  # by caching deferreds, 'fetchImg' does not throw multiple request about one src
+  # to wait the first img's loading.
+
+  ns.createCachedFunction = (requestedFunction) ->
+    cache = {}
+    (key, options) ->
+      if(!cache[key])
+        cache[key] = $.Deferred (defer) ->
+          requestedFunction defer, key, options
+        .promise()
+      cache[key]
+
+  # ============================================================
+  # loadImg
+
+  ns.loadImg = (src) ->
+  
+    defer = $.Deferred()
+    img = new Image
+    
+    cleanUp = ->
+      img.onload = img.onerror = null
+
+    img.onload = ->
+      cleanUp()
+      defer.resolve $(img)
+
+    img.onerror = ->
+      cleanUp()
+      defer.reject $(img)
+
+    img.src = src
+    defer.promise()
 
   # ============================================================
   # calcNaturalWH
@@ -73,8 +110,8 @@ do ($=jQuery, window=window, document=document) ->
       return defer.promise()
 
     # main
-    ns.calcNaturalWH = $.ImgLoaderNs.createCachedFunction (defer, src) ->
-      ($.loadImgWoCache src).then ($img) ->
+    ns.calcNaturalWH = ns.createCachedFunction (defer, src) ->
+      (ns.loadImg src).then ($img) ->
         img = $img[0]
         if not (naturalWHDetectable img)
           $holderSetup().done ->

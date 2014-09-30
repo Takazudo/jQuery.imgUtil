@@ -1,5 +1,5 @@
 /*! jQuery.imgUtil (https://github.com/Takazudo/jQuery.imgUtil)
- * lastupdate: 2013-08-01
+ * lastupdate: 2014-09-30
  * version: 0.5.0
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -10,6 +10,36 @@
   (function($, window, document) {
     var ns;
     ns = {};
+    ns.createCachedFunction = function(requestedFunction) {
+      var cache;
+      cache = {};
+      return function(key, options) {
+        if (!cache[key]) {
+          cache[key] = $.Deferred(function(defer) {
+            return requestedFunction(defer, key, options);
+          }).promise();
+        }
+        return cache[key];
+      };
+    };
+    ns.loadImg = function(src) {
+      var cleanUp, defer, img;
+      defer = $.Deferred();
+      img = new Image;
+      cleanUp = function() {
+        return img.onload = img.onerror = null;
+      };
+      img.onload = function() {
+        cleanUp();
+        return defer.resolve($(img));
+      };
+      img.onerror = function() {
+        cleanUp();
+        return defer.reject($(img));
+      };
+      img.src = src;
+      return defer.promise();
+    };
     (function() {
       var $holder, $holderSetup, cache, naturalWHDetectable, tryCalc;
       cache = {};
@@ -69,8 +99,8 @@
         oneTry();
         return defer.promise();
       };
-      return ns.calcNaturalWH = $.ImgLoaderNs.createCachedFunction(function(defer, src) {
-        return ($.loadImgWoCache(src)).then(function($img) {
+      return ns.calcNaturalWH = ns.createCachedFunction(function(defer, src) {
+        return (ns.loadImg(src)).then(function($img) {
           var img, wh;
           img = $img[0];
           if (!(naturalWHDetectable(img))) {
