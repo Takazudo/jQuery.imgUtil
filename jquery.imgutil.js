@@ -1,5 +1,5 @@
 /*! jQuery.imgUtil (https://github.com/Takazudo/jQuery.imgUtil)
- * lastupdate: 2014-09-30
+ * lastupdate: 2014-11-10
  * version: 0.6.0
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -86,9 +86,9 @@
           } else {
             if (!res.width || !res.height) {
               count++;
-              return (wait(100)).done(function() {
+              return setTimeout(function() {
                 return oneTry();
-              });
+              }, 100);
             } else {
               cache[src];
               $div.remove();

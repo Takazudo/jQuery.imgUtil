@@ -99,7 +99,9 @@ do ($=jQuery, window=window, document=document) ->
         else
           if (!res.width or !res.height)
             count++
-            (wait 100).done -> oneTry()
+            setTimeout ->
+              oneTry()
+            , 100
           else
             cache[src]
             $div.remove()
