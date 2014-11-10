@@ -1,6 +1,6 @@
 /*! jQuery.imgUtil (https://github.com/Takazudo/jQuery.imgUtil)
  * lastupdate: 2014-11-10
- * version: 0.6.0
+ * version: 0.6.1
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
 (function() {
