@@ -1,5 +1,9 @@
 # Change log
 
+## v0.5.1
+
+* fixed: had error when img was null
+
 ## v0.5.0
 
 * implemented `overrideImgPut` option.
