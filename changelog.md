@@ -1,8 +1,12 @@
 # Change log
 
-## v0.5.1
+## v0.6.1
 
 * fixed: had error when img was null
+
+## v0.6.0
+
+* removed other lib dependency
 
 ## v0.5.0
 
