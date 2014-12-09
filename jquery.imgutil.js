@@ -284,7 +284,7 @@
         switch (o.edge) {
           case 'right':
           case 'left':
-            shrinkRateH = o.rectHeight / o.imgWidth;
+            shrinkRateH = o.rectHeight / o.imgHeight;
             ret.width = Math.round(o.imgWidth * shrinkRateH);
             ret.height = o.rectHeight;
             break;

@@ -305,7 +305,7 @@ do ($=jQuery, window=window, document=document) ->
       
       switch o.edge
         when 'right', 'left'
-          shrinkRateH = o.rectHeight / o.imgWidth
+          shrinkRateH = o.rectHeight / o.imgHeight
           ret.width = Math.round (o.imgWidth * shrinkRateH)
           ret.height = o.rectHeight
         when 'top', 'bottom'
