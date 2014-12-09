@@ -558,14 +558,15 @@
         cloneImg: true,
         enlargeSmallImg: true,
         useNewImgElOnRefresh: false,
-        attr_src: 'data-fittoedge-src',
+        attr_src: 'data-imgfittoedge-src',
+        attr_edge: 'data-imgfittoedge-edge',
         overrideImgPut: null
       };
 
       function ImgFitToEdge($el, options) {
         this.$el = $el;
         this.options = $.extend({}, ns.ImgFitToEdge.defaults, options);
-        this.edge = this.$el.attr('data-fittoedge-edge');
+        this.edge = this.$el.attr(this.options.attr_edge);
         ImgFitToEdge.__super__.constructor.apply(this, arguments);
       }
 

@@ -555,13 +555,14 @@ do ($=jQuery, window=window, document=document) ->
       cloneImg: true
       enlargeSmallImg: true
       useNewImgElOnRefresh: false
-      attr_src: 'data-fittoedge-src'
+      attr_src: 'data-imgfittoedge-src'
+      attr_edge: 'data-imgfittoedge-edge'
       overrideImgPut: null
       
     constructor: (@$el, options) ->
 
       @options = $.extend {}, ns.ImgFitToEdge.defaults, options
-      @edge = @$el.attr 'data-fittoedge-edge'
+      @edge = @$el.attr @options.attr_edge
       super
     
     refresh: ->
