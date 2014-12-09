@@ -15,7 +15,7 @@ This also works on old browsers which do not have naturalWidth/naturalHeight fea
 
 $.fn.imgCoverRect adjusts img style to cover the container.
 
-### $.fn.imgContainRect / $.fn.refreshImgContainRect
+### $.fn.imgCoverRect / $.fn.imgContainRect / $.fn.imgFitToEdge
 
 $.fn.imgContainRect adjusts img style to be contained by the container.
 
@@ -28,6 +28,9 @@ $.fn.imgContainRect adjusts img style to be contained by the container.
 * [$.fn.imgContainRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect/)
 * [$.fn.imgContainRect - oninit/overrideImgPut](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect_oninit/)
 * [$.fn.refreshImgContainRect](http://takazudo.github.io/jQuery.imgUtil/demos/imgContainRect_refresh/)
+* [$.fn.imgFitToEdge](http://takazudo.github.io/jQuery.imgUtil/demos/imgFitToEdge/)
+* [$.fn.imgFitToEdge - oninit/overrideImgPut](http://takazudo.github.io/jQuery.imgUtil/demos/imgFitToEdge_oninit/)
+* [$.fn.refreshImgFitToEdge](http://takazudo.github.io/jQuery.imgUtil/demos/imgFitToEdge_refresh/)
 
 ## Usage
 
