@@ -1,5 +1,5 @@
 /*! jQuery.imgUtil (https://github.com/Takazudo/jQuery.imgUtil)
- * lastupdate: 2014-11-10
+ * lastupdate: 2014-12-09
  * version: 0.6.1
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -268,6 +268,60 @@
         return res;
       };
     })();
+    ns.calcEdgeFitImgWH = (function() {
+      var defaults;
+      defaults = {
+        edge: null,
+        imgWidth: null,
+        imgHeight: null,
+        rectWidth: null,
+        rectHeight: null
+      };
+      return function(options) {
+        var o, ret, shrinkRateH, shrinkRateW;
+        o = $.extend({}, defaults, options);
+        ret = {};
+        switch (o.edge) {
+          case 'right':
+          case 'left':
+            shrinkRateH = o.rectHeight / o.imgWidth;
+            ret.width = Math.round(o.imgWidth * shrinkRateH);
+            ret.height = o.rectHeight;
+            break;
+          case 'top':
+          case 'bottom':
+            shrinkRateW = o.rectWidth / o.imgWidth;
+            ret.width = o.rectWidth;
+            ret.height = Math.round(o.imgHeight * shrinkRateW);
+        }
+        switch (o.edge) {
+          case 'left':
+            ret.top = 0;
+            ret.right = 'auto';
+            ret.bottom = 'auto';
+            ret.left = 0;
+            break;
+          case 'right':
+            ret.top = 0;
+            ret.right = 0;
+            ret.bottom = 'auto';
+            ret.left = 'auto';
+            break;
+          case 'top':
+            ret.top = 0;
+            ret.right = 'auto';
+            ret.bottom = 'auto';
+            ret.left = 0;
+            break;
+          case 'bottom':
+            ret.top = 'auto';
+            ret.right = 'auto';
+            ret.bottom = 0;
+            ret.left = 0;
+        }
+        return ret;
+      };
+    })();
     ns.AbstractImgRectFitter = (function() {
 
       function AbstractImgRectFitter() {
@@ -482,6 +536,71 @@
         });
       };
       return $.fn.refreshImgContainRect = function() {
+        return this.each(function(i, el) {
+          var $el, instance;
+          $el = $(el);
+          instance = $el.data(dataKey);
+          if (!instance) {
+            return;
+          }
+          return instance.refresh();
+        });
+      };
+    })();
+    ns.ImgFitToEdge = (function(_super) {
+
+      __extends(ImgFitToEdge, _super);
+
+      ImgFitToEdge.defaults = {
+        src: null,
+        oninit: null,
+        onfail: null,
+        cloneImg: true,
+        enlargeSmallImg: true,
+        useNewImgElOnRefresh: false,
+        attr_src: 'data-fittoedge-src',
+        overrideImgPut: null
+      };
+
+      function ImgFitToEdge($el, options) {
+        this.$el = $el;
+        this.options = $.extend({}, ns.ImgFitToEdge.defaults, options);
+        this.edge = this.$el.attr('data-fittoedge-edge');
+        ImgFitToEdge.__super__.constructor.apply(this, arguments);
+      }
+
+      ImgFitToEdge.prototype.refresh = function() {
+        var styles;
+        if (this._stillLoadingImg === true) {
+          return;
+        }
+        this.rectWidth = this.$el.width();
+        this.rectHeight = this.$el.height();
+        styles = ns.calcEdgeFitImgWH({
+          edge: this.edge,
+          imgWidth: this.originalImgWidth,
+          imgHeight: this.originalImgHeight,
+          rectWidth: this.rectWidth,
+          rectHeight: this.rectHeight
+        });
+        this._finalizeImg(styles);
+        return this;
+      };
+
+      return ImgFitToEdge;
+
+    })(ns.AbstractImgRectFitter);
+    (function() {
+      var dataKey;
+      dataKey = 'imgfittoedge';
+      $.fn.imgFitToEdge = function(options) {
+        return this.each(function(i, el) {
+          var $el;
+          $el = $(el);
+          return $el.data(dataKey, new ns.ImgFitToEdge($el, options));
+        });
+      };
+      return $.fn.refreshImgFitToEdge = function() {
         return this.each(function(i, el) {
           var $el, instance;
           $el = $(el);

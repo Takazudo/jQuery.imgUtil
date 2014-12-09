@@ -1,0 +1,103 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<script src="../../libs/jquery/1.7.0/jquery.js"></script>
+<script src="../../jquery.imgutil.js"></script>
+<style>
+* {
+  margin:0;
+  padding:0;
+  border:0;
+}
+body {
+  padding:15px;
+}
+h1 {
+  padding:0 0 20px;
+}
+p {
+  padding:0 0 20px;
+}
+pre {
+  border:1px solid #000;
+  padding:10px;
+  margin:0 0 20px;
+}
+.imgfit {
+  border:1px solid red;
+  margin:100px auto;
+  position:relative;
+}
+  .imgfit img {
+    position:absolute;
+    opacity: .8;
+  }
+</style>
+<script>
+$(function(){
+
+  $('.imgfit').imgFitToEdge();
+
+});
+</script>
+</head>
+<body>
+<h1>$.fn.imgFitToEdge</h1>
+<p>$.fn.imgFitToEdge adjusts img style to be fit to the edge of its container.</p>
+<pre>$('.imgfit').imgFitToEdge();</pre>
+<h2>edge="left"</h2>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="left" style="width:50px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="left" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="left" style="width:150px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="left" style="width:200px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="left" style="width:250px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="left" style="width:300px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="left" style="width:100px; height:50px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="left" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="left" style="width:100px; height:150px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="left" style="width:100px; height:200px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="left" style="width:100px; height:250px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="left" style="width:100px; height:300px;"></div>
+<h2>edge="right"</h2>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="right" style="width:50px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="right" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="right" style="width:150px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="right" style="width:200px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="right" style="width:250px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="right" style="width:300px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="right" style="width:100px; height:50px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="right" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="right" style="width:100px; height:150px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="right" style="width:100px; height:200px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="right" style="width:100px; height:250px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="right" style="width:100px; height:300px;"></div>
+<h2>edge="top"</h2>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="top" style="width:50px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="top" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="top" style="width:150px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="top" style="width:200px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="top" style="width:250px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="top" style="width:300px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="top" style="width:100px; height:50px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="top" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="top" style="width:100px; height:150px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="top" style="width:100px; height:200px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="top" style="width:100px; height:250px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="top" style="width:100px; height:300px;"></div>
+<h2>edge="bottom"</h2>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="bottom" style="width:50px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="bottom" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="bottom" style="width:150px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="bottom" style="width:200px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="bottom" style="width:250px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="bottom" style="width:300px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="bottom" style="width:100px; height:50px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="bottom" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="bottom" style="width:100px; height:150px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="bottom" style="width:100px; height:200px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="bottom" style="width:100px; height:250px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="bottom" style="width:100px; height:300px;"></div>
+</body>
+</html>

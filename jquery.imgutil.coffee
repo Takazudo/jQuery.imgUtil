@@ -285,6 +285,57 @@ do ($=jQuery, window=window, document=document) ->
           res.height = o.rectHeight
 
       return res
+      
+  # ============================================================
+  # calcEdgeFitImgWH
+
+  ns.calcEdgeFitImgWH = do ->
+
+    defaults =
+      edge: null # 'left' or 'right' or 'top' or 'bottom'
+      imgWidth: null
+      imgHeight: null
+      rectWidth: null
+      rectHeight: null
+
+    return (options) ->
+    
+      o = $.extend {}, defaults, options
+      ret = {}
+      
+      switch o.edge
+        when 'right', 'left'
+          shrinkRateH = o.rectHeight / o.imgWidth
+          ret.width = Math.round (o.imgWidth * shrinkRateH)
+          ret.height = o.rectHeight
+        when 'top', 'bottom'
+          shrinkRateW = o.rectWidth / o.imgWidth
+          ret.width = o.rectWidth
+          ret.height = Math.round (o.imgHeight * shrinkRateW)
+          
+      switch o.edge
+        when 'left'
+          ret.top = 0
+          ret.right = 'auto'
+          ret.bottom = 'auto'
+          ret.left = 0
+        when 'right'
+          ret.top = 0
+          ret.right = 0
+          ret.bottom = 'auto'
+          ret.left = 'auto'
+        when 'top'
+          ret.top = 0
+          ret.right = 'auto'
+          ret.bottom = 'auto'
+          ret.left = 0
+        when 'bottom'
+          ret.top = 'auto'
+          ret.right = 'auto'
+          ret.bottom = 0
+          ret.left = 0
+      
+      return ret
 
   # ============================================================
   # AbstractImgRectFitter
@@ -491,6 +542,64 @@ do ($=jQuery, window=window, document=document) ->
         instance = $el.data dataKey
         return unless instance
         instance.refresh()
+
+  # ============================================================
+  # imgFitToEdge
+
+  class ns.ImgFitToEdge extends ns.AbstractImgRectFitter
+    
+    @defaults =
+      src: null
+      oninit: null
+      onfail: null
+      cloneImg: true
+      enlargeSmallImg: true
+      useNewImgElOnRefresh: false
+      attr_src: 'data-fittoedge-src'
+      overrideImgPut: null
+      
+    constructor: (@$el, options) ->
+
+      @options = $.extend {}, ns.ImgFitToEdge.defaults, options
+      @edge = @$el.attr 'data-fittoedge-edge'
+      super
+    
+    refresh: ->
+    
+      return if @_stillLoadingImg is true
+
+      @rectWidth = @$el.width()
+      @rectHeight = @$el.height()
+      
+      styles = ns.calcEdgeFitImgWH
+        edge: @edge
+        imgWidth: @originalImgWidth
+        imgHeight: @originalImgHeight
+        rectWidth: @rectWidth
+        rectHeight: @rectHeight
+      
+      @_finalizeImg styles
+
+      return this
+      
+  # bridge
+  
+  do ->
+
+    dataKey = 'imgfittoedge'
+
+    $.fn.imgFitToEdge = (options) ->
+      return @each (i, el) ->
+        $el = $(el)
+        $el.data dataKey, (new ns.ImgFitToEdge $el, options)
+
+    $.fn.refreshImgFitToEdge = ->
+      return @each (i, el) ->
+        $el = $(el)
+        instance = $el.data dataKey
+        return unless instance
+        instance.refresh()
+      
 
   # ============================================================
   # globalify

@@ -1,0 +1,154 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<script src="../../libs/jquery/1.7.0/jquery.js"></script>
+<script src="../../libs/spin.js"></script>
+<script src="../../jquery.imgutil.js"></script>
+<style>
+body {
+  padding:15px;
+}
+h1 {
+  padding:0 0 20px;
+}
+h2 {
+  clear: both;
+}
+p {
+  padding:0 0 20px;
+}
+pre {
+  border:1px solid #000;
+  padding:10px;
+  margin:0 0 20px;
+}
+.imgfit {
+  border:1px solid red;
+  float: left;
+  margin:10px;
+  position:relative;
+}
+  .imgfit img {
+    position:absolute;
+    opacity: .8;
+  }
+</style>
+<script>
+$(function(){
+
+  var changeValRandomly = function(val) {
+    val = val + Math.floor((Math.random() * 100) - 50)
+    if(val < 50) {
+      val = 50;
+    }
+    return val;
+  };
+
+  var $imgfitEls = $('.imgfit')
+
+  $imgfitEls.imgFitToEdge({
+    oninit: function(data) {
+      // spin.js http://fgnass.github.io/spin.js/
+      var spinnerOptions = {
+        color: '#333',
+        lines: 10,
+        length: 10,
+        width: 2,
+        radius: 10
+      };
+      (new Spinner(spinnerOptions)).spin(data.el[0]);
+    },
+    overrideImgPut: function($container, $img) {
+      $container.empty();
+      $img.hide();
+      $container.append($img);
+      $img.fadeIn();
+    }
+  });
+
+  var shuffleSizes = function() {
+    $imgfitEls.each(function(i, el) {
+      var $el = $(el);
+      $el.css({
+        width: changeValRandomly($el.width()),
+        height: changeValRandomly($el.height())
+      });
+    });
+  };
+
+  $('#resize').click(function() {
+    shuffleSizes();
+  });
+  $('#refresh').click(function() {
+    $imgfitEls.refreshImgFitToEdge();
+  });
+  $('#resizerefresh').click(function() {
+    shuffleSizes();
+    $imgfitEls.refreshImgFitToEdge();
+  });
+
+});
+</script>
+</head>
+<body>
+<h1>$.fn.imgFitToEdge + $.fn.refreshImgFitToEdge</h1>
+<p>$.fn.refreshImgFitToEdge does refresh.</p>
+<div class="buttons">
+  <button id="resize">resize</button> <button id="refresh">then, refresh</button> or <button id="resizerefresh">resize then refresh</button>
+</div>
+<h2>edge="left"</h2>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="left" style="width:50px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="left" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="left" style="width:150px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="left" style="width:200px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="left" style="width:250px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="left" style="width:300px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="left" style="width:100px; height:50px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="left" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="left" style="width:100px; height:150px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="left" style="width:100px; height:200px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="left" style="width:100px; height:250px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="left" style="width:100px; height:300px;"></div>
+<h2>edge="right"</h2>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="right" style="width:50px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="right" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="right" style="width:150px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="right" style="width:200px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="right" style="width:250px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="right" style="width:300px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="right" style="width:100px; height:50px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="right" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="right" style="width:100px; height:150px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="right" style="width:100px; height:200px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="right" style="width:100px; height:250px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="right" style="width:100px; height:300px;"></div>
+<h2>edge="top"</h2>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="top" style="width:50px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="top" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="top" style="width:150px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="top" style="width:200px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="top" style="width:250px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="top" style="width:300px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="top" style="width:100px; height:50px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="top" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="top" style="width:100px; height:150px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="top" style="width:100px; height:200px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="top" style="width:100px; height:250px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="top" style="width:100px; height:300px;"></div>
+<h2>edge="bottom"</h2>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="bottom" style="width:50px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/1.jpg" data-fittoedge-edge="bottom" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="bottom" style="width:150px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/2.jpg" data-fittoedge-edge="bottom" style="width:200px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="bottom" style="width:250px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/3.jpg" data-fittoedge-edge="bottom" style="width:300px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="bottom" style="width:100px; height:50px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/4.jpg" data-fittoedge-edge="bottom" style="width:100px; height:100px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="bottom" style="width:100px; height:150px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/5.jpg" data-fittoedge-edge="bottom" style="width:100px; height:200px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="bottom" style="width:100px; height:250px;"></div>
+<div class="imgfit" data-fittoedge-src="../imgs/6.jpg" data-fittoedge-edge="bottom" style="width:100px; height:300px;"></div>
+</body>
+</html>
