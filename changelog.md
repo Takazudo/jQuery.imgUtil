@@ -1,5 +1,9 @@
 # Change log
 
+## v0.7.0
+
+* implemented `$.fn.imgFitToEdge`
+
 ## v0.6.1
 
 * fixed: had error when img was null
